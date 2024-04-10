@@ -1,0 +1,30 @@
+done:
+
+
+undone:
+
+
+
+info:
+https://gontjarow.github.io/MiniLibX/mlx-tutorial-create-image.html
+
+#debug
+lldb linux & mac
+gdb linux
+
+Makefile (if, else)
+printenv | grep USER
+env
+
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./pipex infile "ls -l" "wc -l" outfile
+
+https://www.youtube.com/watch?v=5fnVr-zH-SE
+https://www.youtube.com/watch?v=OVFEWSP7n8c
+https://www.youtube.com/watch?v=6xbLgZpOBi8
+https://www.youtube.com/watch?v=Mqb2dVRe0uo
+https://www.youtube.com/watch?v=PZrQ4eGm-hM
+https://www.youtube.com/watch?v=6u_iPGVkfZ4
+https://www.youtube.com/watch?v=tcYo6hipaSA
+https://www.youtube.com/watch?v=kCGaRdArSnA
+talvez
+https://www.youtube.com/watch?v=VzCawLzITh0
