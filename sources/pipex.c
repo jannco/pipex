@@ -6,7 +6,7 @@
 /*   By: yadereve <yadereve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 17:25:54 by yadereve          #+#    #+#             */
-/*   Updated: 2024/04/10 17:54:35 by yadereve         ###   ########.fr       */
+/*   Updated: 2024/04/15 20:34:15 by yadereve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,6 @@
 
 int	main(void)
 {
-	printf("ok");
+	printf("ok\n");
 	return (0);
 }

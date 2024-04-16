@@ -6,7 +6,7 @@
 #    By: yadereve <yadereve@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/12 20:11:52 by yadereve          #+#    #+#              #
-#    Updated: 2024/04/10 17:56:59 by yadereve         ###   ########.fr        #
+#    Updated: 2024/04/14 16:55:22 by yadereve         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,18 +17,14 @@ COMPRESS = ar rcs
 RM = rm -rf
 
 SRC_DIR = sources
-FILES = $(wildcard *.c)
-SRC = $(addprefix $(SRC_DIR)/,$(FILES))
+SRC = $(wildcard $(SRC_DIR)/*.c)
 LIBFT = libft/libft.a
 OBJ_DIR = objects
 OBJ = $(addprefix $(OBJ_DIR)/,$(notdir $(SRC:.c=.o)))
 
 #bonus
 SRC_BONUS_DIR = sources_bonus
-FILES_BONUS = check_map_bonus.c error_bonus.c initialization_bonus.c \
-	load_textures_bonus.c load_textures2_bonus.c mlx_start_bonus.c \
-	read_input_bonus.c so_long_bonus.c utilites_bonus.c validate_map_bonus.c \
-	finish_game_bonus.c animate_bonus.c create_img_bonus.c
+FILES_BONUS = $(wildcard $(SRC_BONUS_DIR)/*.c)
 SRC_BONUS = $(addprefix $(SRC_BONUS_DIR)/,$(FILES_BONUS))
 LIBFT = libft/libft.a
 OBJ_BONUS_DIR = objects_bonus
@@ -41,16 +37,16 @@ BLUE = \033[1;34m
 ORANGE = \033[0;33m
 RESET = \033[0;0m
 
-MLX_DIR = minilibx-linux
-MLX_LIB = $(MLX_DIR)/libmlx_Linux.a
-MLX_INC = -I$(MLX_DIR) -I$(MLX_DIR)/linux
-MLX_FLAGS = -L$(MLX_DIR) -lmlx_Linux -L/usr/lib -lXext -lX11 -lm -lz
-
 all: $(NAME)
 
 $(NAME): $(OBJ_DIR) $(OBJ) $(LIBFT)
 	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
-	@echo "\n pipex \n"
+	@echo "$(BLUE)       __"
+	@echo ".-----|__.-----.-----.--.--."
+	@echo "|  _  |  |  _  |  -__|_   _|"
+	@echo "|   __|__|   __|_____|__.__|"
+	@echo "|__|     |__|$(RESET)"
+	@echo "\n"
 	@echo "created: $(GREEN)$(NAME)$(RESET)"
 #	@echo "---- Exemple run: ./pipex infile "ls -l" "wc -l" outfile
 
@@ -63,20 +59,17 @@ $(NAME)_bonus: $(OBJ_BONUS_DIR) $(OBJ_BONUS) all
 $(LIBFT):
 	@$(MAKE) -C ./libft --no-print-directory
 
-$(MLX_LIB):
-	@$(MAKE) -C ./$(MLX_DIR) --no-print-directory
-
 $(OBJ_DIR):
 	@mkdir -p $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@$(CC) $(CFLAGS) $(MLX_INC) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_BONUS_DIR):
 	@mkdir -p $@
 
 $(OBJ_BONUS_DIR)/%.o: $(SRC_BONUS_DIR)/%.c
-	@$(CC) $(CFLAGS) $(MLX_INC) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	@$(RM) $(OBJ_DIR) $(OBJ_BONUS_DIR)
