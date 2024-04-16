@@ -5,8 +5,20 @@ undone:
 
 
 
-info:
-https://gontjarow.github.io/MiniLibX/mlx-tutorial-create-image.html
+External functs:
+open, close, read, write,
+malloc, free, perror,
+strerror, access, dup, dup2,
+execve, exit, fork, pipe,
+unlink, wait, waitpid
+
+Subject:
+./pipex file1 cmd1 cmd2 file2
+< file1 cmd1 | cmd2 > file2
+
+Exemples:
+< infile ls -l | wc -l > outfile
+< infile grep a1 | wc -w > outfile
 
 #debug
 lldb linux & mac
