@@ -6,7 +6,7 @@
 #    By: yadereve <yadereve@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/12 20:11:52 by yadereve          #+#    #+#              #
-#    Updated: 2024/04/14 16:55:22 by yadereve         ###   ########.fr        #
+#    Updated: 2024/04/17 23:51:18 by yadereve         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -84,6 +84,6 @@ fclean: clean
 	@echo "\t$(RED)$(NAME)$(RESET)"
 #	@echo "\t$(RED)$(NAME)_bonus$(RESET)"
 
-re: fclean all bonus
+re: fclean all
 
-.PHONY: all clean fclean re bonus
+.PHONY: all clean fclean re

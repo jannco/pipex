@@ -20,6 +20,12 @@ Exemples:
 < infile ls -l | wc -l > outfile
 < infile grep a1 | wc -w > outfile
 
+Bonus:
+This:
+         $> ./pipex here_doc LIMITER cmd cmd1 file
+Should behave like:
+         cmd << LIMITER | cmd1 >> file
+
 #debug
 lldb linux & mac
 gdb linux
