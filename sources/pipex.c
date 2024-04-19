@@ -6,7 +6,7 @@
 /*   By: yadereve <yadereve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 17:25:54 by yadereve          #+#    #+#             */
-/*   Updated: 2024/04/18 14:48:09 by yadereve         ###   ########.fr       */
+/*   Updated: 2024/04/19 08:27:18 by yadereve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,23 +68,26 @@ void	get_path(char **path, char **cmd, char **envp)
 		perror("failed Id");
 }
 
-char	**parsing_cmd(int argc, char **argv)
-{
-	char	**cmd = NULL;
-	int		i;
+// char	*parsing_cmd(int argc, char **argv)
+// {
+// 	char cmd[2][3] = {
+// 		{"ls", "-l", NULL},
+// 		{"cat", "-e", NULL}
+// 	};
+// 	int		i;
 
-	// cmd[0] = (char*[]){"ls", "-l", NULL};
-	// cmd[1] = (char*[]){"cat", "-e", NULL};
-	i = 2;
-	while (argv[i])
-	{
-		if (i >= argc)
-			break ;
-		i++;
-	}
-	printf("%d\n", i);
-	return (cmd);
-}
+// 	// cmd[0] = (char*[]){"ls", "-l", NULL};
+// 	// cmd[1] = (char*[]){"cat", "-e", NULL};
+// 	i = 2;
+// 	while (argv[i])
+// 	{
+// 		if (i >= argc)
+// 			break ;
+// 		i++;
+// 	}
+// 	printf("%d\n", i);
+// 	return (cmd);
+// }
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -93,15 +96,15 @@ int	main(int argc, char **argv, char **envp)
 	int		f2;
 	pid_t	id;
 	pid_t	id2;
-	char	*cmd1[3] = {"ls", "-l", NULL};
-	char	*cmd2[3] = {"cat", "-e", NULL};
-	// char	**cmd;
+	char	**cmd1;
+	char	**cmd2;
 	int		status;
 	char	**path;
 
-	// cmd = parsing(argc, argv);
 	f1 = 0;
 	f2 = 0;
+	cmd1 = ft_split(argv[2], ' ');
+	cmd2 = ft_split(argv[3], ' ');
 	path = find_path(envp);
 	status = 0;
 	pipe(fd);
@@ -148,6 +151,8 @@ int	main(int argc, char **argv, char **envp)
 		get_path(path, cmd2, envp);
 	}
 	free_split(path);
+	free_split(cmd1);
+	free_split(cmd2);
 	close(fd[READ_END]);
 	close(fd[WRITE_END]);
 	close(f1);
