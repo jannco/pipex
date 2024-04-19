@@ -6,7 +6,7 @@
 /*   By: yadereve <yadereve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 17:25:54 by yadereve          #+#    #+#             */
-/*   Updated: 2024/04/19 08:27:18 by yadereve         ###   ########.fr       */
+/*   Updated: 2024/04/19 11:07:46 by yadereve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 // 	STDIN_FILENO = 0
 // 	STDOUT_FILENO = 1
 // 	STDERR_FILENO = 2
-
 
 void	free_split(char **str)
 {
@@ -29,6 +28,26 @@ void	free_split(char **str)
 	}
 	free(str);
 }
+
+void	error_message(char *str, char **cmd, int code, int fd[2])
+{
+	ft_putstr_fd(str, STDERR_FILENO);
+	if (cmd)
+		ft_putendl_fd(cmd[0], STDERR_FILENO);
+	else
+		ft_putchar_fd('\n', STDERR_FILENO);
+	if (fd != 0)
+	{
+		if (fd[WRITE_END] >= 0)
+			close(fd[WRITE_END]);
+		if (fd[READ_END] >= 0)
+			close(fd[READ_END]);
+	}
+	if (cmd)
+		free_split(cmd);
+	exit (code);
+}
+
 
 char	**find_path(char **envp)
 {
@@ -53,19 +72,27 @@ void	get_path(char **path, char **cmd, char **envp)
 {
 	int		i;
 	char	*path_buff;
+	int		fd;
 
 	i = 0;
-	while (path[i])
+	if (ft_strncmp("/usr/bin/", cmd[0], 9) == 0
+		|| ft_strncmp("/bin/", cmd[0], 5) == 0)
+		execve(cmd[0], cmd, envp);
+	else
 	{
-		path_buff = ft_strjoin(path[i], "/");
-		path[i] = ft_strjoin(path_buff, cmd[0]);
-		free(path_buff);
-		if (execve(path[i], cmd, envp) == 0)
-			break ;
-		i++;
+		while (path[i])
+		{
+			path_buff = ft_strjoin(path[i], "/");
+			path[i] = ft_strjoin(path_buff, cmd[0]);
+			fd = open(path[i], O_RDONLY);
+			free(path_buff);
+			if (fd >= 0)
+				execve(path[i], cmd, envp);
+			i++;
+		}
 	}
-	if (execve(path[i], cmd, envp) == -1)
-		perror("failed Id");
+	free_split(path);
+	error_message("pipex: command not found: ", cmd, 127, 0);
 }
 
 // char	*parsing_cmd(int argc, char **argv)
@@ -92,8 +119,8 @@ void	get_path(char **path, char **cmd, char **envp)
 int	main(int argc, char **argv, char **envp)
 {
 	int		fd[2];
-	int		f1;
-	int		f2;
+	int		infile;
+	int		outfile;
 	pid_t	id;
 	pid_t	id2;
 	char	**cmd1;
@@ -101,33 +128,40 @@ int	main(int argc, char **argv, char **envp)
 	int		status;
 	char	**path;
 
-	f1 = 0;
-	f2 = 0;
+	if (argc != 5)
+		error_message("Invalid number of arguments", NULL, 1, 0);
+	infile = 0;
+	outfile = 0;
 	cmd1 = ft_split(argv[2], ' ');
 	cmd2 = ft_split(argv[3], ' ');
 	path = find_path(envp);
 	status = 0;
 	pipe(fd);
 	if (pipe(fd) < 0)
-		perror("failed to create pipe");
+	{
+		free_split(cmd1);
+		free_split(cmd2);
+		free_split(path);
+		error_message("failed to open pipe", NULL, 1, 0);
+	}
 	id = fork();
 	if (id < 0)
 		perror("Fork");
 	if (id == 0)
 	{
-		// Child process
-		// exit(127);
+		// Child 1 process
+		free_split(cmd2);
 		if (fd[READ_END] >= 0)
 			close(fd[READ_END]);
-		f1 = open(argv[1], O_RDONLY);
-		if (f1 < 0)
-			perror("failed to open infile");
-		dup2(f1, STDIN_FILENO);
+		infile = open(argv[1], O_RDONLY);
+		if (infile < 0)
+			error_message("No such file or directory", NULL, 1, fd);
+		dup2(infile, STDIN_FILENO);
 		dup2(fd[WRITE_END], STDOUT_FILENO);
 		if (fd[WRITE_END] >= 0)
 			close(fd[WRITE_END]);
-		if (f1 >= 0)
-			close(f1);
+		if (infile >= 0)
+			close(infile);
 		get_path(path, cmd1, envp);
 	}
 	id2 = fork();
@@ -136,18 +170,18 @@ int	main(int argc, char **argv, char **envp)
 	if (id2 == 0)
 	{
 		// Child 2 process
-		// exit(126);
+		free_split(cmd1);
 		if (fd[WRITE_END] >= 0)
 			close(fd[WRITE_END]);
-		f2 = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (f1 < 0)
-			perror("failed to create/open outfile");
-		dup2(f2, STDOUT_FILENO);
+		outfile = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (outfile < 0)
+			error_message("failed to open outfile", NULL, 1, fd);
+		dup2(outfile, STDOUT_FILENO);
 		dup2(fd[READ_END], STDIN_FILENO);
 		if (fd[READ_END] >= 0)
 			close(fd[READ_END]);
-		if (f2 >= 0)
-			close(f2);
+		if (outfile >= 0)
+			close(outfile);
 		get_path(path, cmd2, envp);
 	}
 	free_split(path);
@@ -155,8 +189,6 @@ int	main(int argc, char **argv, char **envp)
 	free_split(cmd2);
 	close(fd[READ_END]);
 	close(fd[WRITE_END]);
-	close(f1);
-	close(f2);
 	waitpid(id, NULL, 0);
 	waitpid(id2, &status, 0);
 	return (WEXITSTATUS(status));
