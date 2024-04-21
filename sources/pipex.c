@@ -33,7 +33,10 @@ void	error_message(char *str, char **cmd, int code, int fd[2])
 {
 	ft_putstr_fd(str, STDERR_FILENO);
 	if (cmd)
+	{
 		ft_putendl_fd(cmd[0], STDERR_FILENO);
+		free_split(cmd);
+	}
 	else
 		ft_putchar_fd('\n', STDERR_FILENO);
 	if (fd != 0)
@@ -43,8 +46,6 @@ void	error_message(char *str, char **cmd, int code, int fd[2])
 		if (fd[READ_END] >= 0)
 			close(fd[READ_END]);
 	}
-	if (cmd)
-		free_split(cmd);
 	exit (code);
 }
 
@@ -87,34 +88,42 @@ void	get_path(char **path, char **cmd, char **envp)
 			fd = open(path[i], O_RDONLY);
 			free(path_buff);
 			if (fd >= 0)
+			{
 				execve(path[i], cmd, envp);
+				close(fd);
+				exit(EXIT_FAILURE);
+			}
 			i++;
 		}
 	}
+	free_split(cmd);
 	free_split(path);
 	error_message("pipex: command not found: ", cmd, 127, 0);
 }
 
-// char	*parsing_cmd(int argc, char **argv)
-// {
-// 	char cmd[2][3] = {
-// 		{"ls", "-l", NULL},
-// 		{"cat", "-e", NULL}
-// 	};
-// 	int		i;
+char	**parsing_cmd( char *str)
+{
+	char	**cmd;
+	// char	*cmd_buff;
+	// int		i;
 
-// 	// cmd[0] = (char*[]){"ls", "-l", NULL};
-// 	// cmd[1] = (char*[]){"cat", "-e", NULL};
-// 	i = 2;
-// 	while (argv[i])
-// 	{
-// 		if (i >= argc)
-// 			break ;
-// 		i++;
-// 	}
-// 	printf("%d\n", i);
-// 	return (cmd);
-// }
+	// i = 1;
+	cmd = ft_split(str, ' ');
+	// while (cmd[++i])
+	// {
+	// 	cmd[1] = ft_strjoin(cmd[1], cmd[i]);
+	// 	free(cmd[i]);
+	// 	cmd[2] = NULL;
+	// }
+	// printf("%d\n", i);
+	printf("cmd_0: %s\n", cmd[0]);
+	printf("cmd_1: %s\n", cmd[1]);
+	printf("cmd_2: %s\n", cmd[2]);
+	printf("cmd_3: %s\n", cmd[3]);
+	printf("cmd_4: %s\n", cmd[4]);
+	printf("cmd_5: %s\n", cmd[5]);
+	return (cmd);
+}
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -127,22 +136,20 @@ int	main(int argc, char **argv, char **envp)
 	char	**cmd2;
 	int		status;
 	char	**path;
-
 	if (argc != 5)
-		error_message("Invalid number of arguments", NULL, 1, 0);
+		error_message("pipex: Invalid number of arguments", NULL, 1, 0);
 	infile = 0;
 	outfile = 0;
 	cmd1 = ft_split(argv[2], ' ');
 	cmd2 = ft_split(argv[3], ' ');
 	path = find_path(envp);
 	status = 0;
-	pipe(fd);
 	if (pipe(fd) < 0)
 	{
 		free_split(cmd1);
 		free_split(cmd2);
 		free_split(path);
-		error_message("failed to open pipe", NULL, 1, 0);
+		error_message("pipex: failed to open pipe", NULL, 2, 0);
 	}
 	id = fork();
 	if (id < 0)
@@ -155,7 +162,7 @@ int	main(int argc, char **argv, char **envp)
 			close(fd[READ_END]);
 		infile = open(argv[1], O_RDONLY);
 		if (infile < 0)
-			error_message("No such file or directory", NULL, 1, fd);
+			error_message("pipex: No such file or directory", NULL, 2, fd);
 		dup2(infile, STDIN_FILENO);
 		dup2(fd[WRITE_END], STDOUT_FILENO);
 		if (fd[WRITE_END] >= 0)
@@ -175,7 +182,7 @@ int	main(int argc, char **argv, char **envp)
 			close(fd[WRITE_END]);
 		outfile = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (outfile < 0)
-			error_message("failed to open outfile", NULL, 1, fd);
+			error_message("pipex: failed to open/create outfile", NULL, 2, fd);
 		dup2(outfile, STDOUT_FILENO);
 		dup2(fd[READ_END], STDIN_FILENO);
 		if (fd[READ_END] >= 0)
