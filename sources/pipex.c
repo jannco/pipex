@@ -118,9 +118,9 @@ int	is_quote(char *str)
 	while (str[i])
 	{
 		if (str[i] == '\"')
-			return (1);
+			return ('\"');
 		else if (str[i] == '\'')
-			return (2);
+			return ('\'');
 		else
 			i++;
 	}
@@ -131,11 +131,11 @@ char	**parsing_cmd( char *str)
 {
 	char	**cmd;
 
-	if (is_quote(str) == 1)
+	if (is_quote(str) == '\"')
 	{
 		cmd = ft_split_cmd(str, '\"');
 	}
-	else if (is_quote(str) == 2)
+	else if (is_quote(str) == '\'')
 	{
 		cmd = ft_split_cmd(str, '\'');
 	}
