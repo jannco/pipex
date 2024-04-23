@@ -6,7 +6,7 @@
 /*   By: yadereve <yadereve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 17:25:54 by yadereve          #+#    #+#             */
-/*   Updated: 2024/04/23 18:46:52 by yadereve         ###   ########.fr       */
+/*   Updated: 2024/04/23 18:49:40 by yadereve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ void	free_split(char **str)
 	}
 	free(str);
 }
-
 
 char	**find_path(char **envp)
 {
