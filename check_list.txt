@@ -2,7 +2,22 @@ done:
 
 
 undone:
+For: ./pipex infile.txt ./script.sh wc outfile.txt
+Error: Command that is in the same folder
+                 ╷                          ╷
+                 │ native                   │ pipex
+╺━━━━━━━━━━━━━━━━┿━━━━━━━━━━━━━━━━━━━━━━━━━━┿━━━━━━━━━━━━━━━━━━━━━━━━━╸
+ outfile content │        4      16      87 │        0       0       0
+                 │                          │
 
+For: ./pipex infile.txt 'sed "s/And/But/"' 'awk "{count++} END {printf \"count: %i\" , count}"' outfile.txt
+Error: Argument with escaped double quotes and then a space (\" ,), inside double quotes (awk argument)
+                 ╷          ╷
+                 │ native   │ pipex
+╺━━━━━━━━━━━━━━━━┿━━━━━━━━━━┿━━━━━━╸
+ return code     │ 0        │ 2
+╶────────────────┼──────────┼──────╴
+ outfile content │ count: 4 │
 
 
 External functs:
