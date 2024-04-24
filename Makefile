@@ -17,7 +17,7 @@ COMPRESS = ar rcs
 RM = rm -rf
 
 SRC_DIR = sources
-SRC = $(wildcard $(SRC_DIR)/*.c)
+SRC = pipex.c pipex_utilites.c
 LIBFT = libft/libft.a
 OBJ_DIR = objects
 OBJ = $(addprefix $(OBJ_DIR)/,$(notdir $(SRC:.c=.o)))
